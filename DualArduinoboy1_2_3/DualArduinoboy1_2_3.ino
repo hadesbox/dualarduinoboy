@@ -138,7 +138,7 @@ byte defaultMemoryMap[MEM_MAX] = {
   1,2,3,7,10,11,12, //wav
   1,2,3,7,10,11,12, //noi
   
-  0, 1, 2, 3, 4, //mGB midi channels (0-15 = 1-16)
+  0, 1, 2, 3, 4, //mGB midi channels (0-15 = 1-16), RIGHT NOW THIS ARE IGNORED to not complicate more the eprom readwrite... the midimessages are broadcasted to all gameboys, so the mGB need to be properlly configured on each DMG by selecting 0-4 midi changes on one mGB and 5-9 midi changes on other
   15, //livemap / sync map midi channel (0-15 = 1-16)
   80,1,  //midiout bit check delay & bit check delay multiplier 
   0,0//midiout byte received delay & byte received delay multiplier 
@@ -149,9 +149,13 @@ byte memory[MEM_MAX];
 * Lets Assign our Arduino Pins .....
 ***************************************************************************/
 
-int pinGBClock     = 0;    // Analog In 0 - clock out to gameboy
-int pinGBSerialOut = 1;    // Analog In 1 - serial data to gameboy
-int pinGBSerialIn  = 2;    // Analog In 2 - serial data from gameboy
+int pinGB1Clock     = 0;    // Analog In 0 - clock out to gameboy 1
+int pinGB1SerialOut = 1;    // Analog In 1 - serial data to gameboy 1
+int pinGB1SerialIn  = 2;    // Analog In 2 - serial data from gameboy 1
+
+int pinGB2Clock     = 3;    // Analog In 0 - clock out to gameboy 2
+int pinGB2SerialOut = 4;    // Analog In 1 - serial data to gameboy 2
+int pinGB2SerialIn  = 5;    // Analog In 2 - serial data from gameboy 2
 
 int pinMidiInputPower = 4; // power pin for midi input opto-isolator
 
@@ -341,8 +345,11 @@ void setup() {
 /*
   Set Pin States
 */
-  digitalWrite(pinGBClock,HIGH);    // gameboy wants a HIGH line
-  digitalWrite(pinGBSerialOut,LOW);    // no data to send
+  digitalWrite(pinGB1Clock,HIGH);    // gameboy wants a HIGH line
+  digitalWrite(pinGB1SerialOut,LOW);    // no data to send
+  
+  digitalWrite(pinGB2Clock,HIGH);    // gameboy wants a HIGH line
+  digitalWrite(pinGB2SerialOut,LOW);    // no data to send
 /*
   Misc Startup
 */

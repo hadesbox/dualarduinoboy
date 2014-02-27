@@ -14,7 +14,7 @@
 void modeMidiGbSetup()
 {
   digitalWrite(pinStatusLed,LOW);
-  DDRC = B00111111; //Set analog in pins as outputs
+  DDRC = B00111111; //Set 6 analog in pins as outputs
   blinkMaxCount=1000;
   modeMidiGb();
 }
@@ -37,20 +37,8 @@ void modeMidiGb()
             sendByte = false;
             midiStatusChannel = incomingMidiByte&0x0F;
             midiStatusType    = incomingMidiByte&0xF0;
-            if(midiStatusChannel == memory[MEM_MGB_CH]) {
-               midiData[0] = midiStatusType;
-               sendByte = true;
-            } else if (midiStatusChannel == memory[MEM_MGB_CH+1]) {
-               midiData[0] = midiStatusType+1;
-               sendByte = true;
-            } else if (midiStatusChannel == memory[MEM_MGB_CH+2]) {
-               midiData[0] = midiStatusType+2;
-               sendByte = true;
-            } else if (midiStatusChannel == memory[MEM_MGB_CH+3]) {
-               midiData[0] = midiStatusType+3;
-               sendByte = true;
-            } else if (midiStatusChannel == memory[MEM_MGB_CH+4]) {
-               midiData[0] = midiStatusType+4;
+            if(0 <= midiStatusChannel && midiStatusChannel <= 9) {
+               midiData[0] = midiStatusType+midiStatusChannel;
                sendByte = true;
             } else {
               midiValueMode  =false;
@@ -101,11 +89,11 @@ void sendByteToGameboy(byte send_byte)
 {
  for(countLSDJTicks=0;countLSDJTicks!=8;countLSDJTicks++) {  //we are going to send 8 bits, so do a loop 8 times
    if(send_byte & 0x80) {
-       PORTC = B00000010;
-       PORTC = B00000011;
+       PORTC = B00010010;
+       PORTC = B00011011;
    } else {
        PORTC = B00000000;
-       PORTC = B00000001;
+       PORTC = B00001001;
    }
    send_byte <<= 1;
  }
